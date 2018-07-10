@@ -1,11 +1,9 @@
 import os
 import csv
 
-# define paths to the in and out data files
 read_path = os.path.join('Resources', 'budget_data.csv')
 write_path = ('financial_analysis.txt')
 
-# declare variables
 row_count = 0
 total_profit = 0
 previous_profit = 0
@@ -18,23 +16,20 @@ great_dec = 0
 dec_date = ''
 write_data = ''
 
-# open with block
-with open(read_path, 'r') as data_in, \
-        open(write_path, 'w') as data_out:
+with open(read_path, 'r') as data_in:
     reader = csv.reader(data_in, delimiter=',')
-    writer = csv.writer(data_out, delimiter='\n')
-    header = next(reader)
 
+    next(reader)
     for row in reader:
         date, profit = row
         profit = int(profit)
         row_count += 1
         total_profit += profit
 
+        # create a list of the monthly changes
         if previous_profit:
             change = profit - previous_profit
             changes.append(change)
-
         previous_profit = profit
 
         if change > great_inc:
@@ -45,8 +40,12 @@ with open(read_path, 'r') as data_in, \
             dec_date = date
             great_dec = change
 
-    ave_change = round(sum(changes) / len(changes), 2)
 
+ave_change = round(sum(changes) / len(changes), 2)
+
+# write data to text fille
+with open(write_path, 'w') as data_out:
+    writer = csv.writer(data_out, delimiter='\n')
     writer.writerow(['Financial Analysis',
                      '-' * 23,
                      'Total Months: {}'.format(row_count),
@@ -57,9 +56,10 @@ with open(read_path, 'r') as data_in, \
                      'Greatest Decrease in Profits: {} (${})'.format(
                          dec_date, great_dec)])
 
-
+# print text file to console
 with open(write_path, 'r') as print_data:
     printer = csv.reader(print_data, delimiter='\n')
     print('\n')
     for line in printer:
         print(line[0])
+    print('\n')
