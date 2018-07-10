@@ -1,33 +1,3 @@
-# * Your task is to create a Python script that analyzes
-#       the records to calculate each of the following:
-
-#   * The total number of months included in the dataset
-
-#   * The total net amount of "Profit/Losses" over the entire period
-
-#   * The average change in "Profit/Losses" between
-#       months over the entire period
-
-#   * The greatest increase in profits (date and amount) over the entire period
-
-#   * The greatest decrease in losses (date and amount) over the entire period
-
-# * As an example, your analysis should look similar to the one below:
-
-#   ```text
-#   Financial Analysis
-#   -----------------------------
-#   Total Months: 86
-#   Total: $38382578
-#   Average  Change: $-2315.12
-#   Greatest Increase in Profits: Feb-2012 ($1926159)
-#   Greatest Decrease in Profits: Sep-2013 ($-2196167)
-#   ```
-
-# * In addition, your final script should both print the
-#       analysis to the terminal and export a text file with the results.
-############################################################################
-
 import os
 import csv
 
@@ -35,8 +5,13 @@ import csv
 read_path = os.path.join('Resources', 'budget_data.csv')
 write_path = ('financial_analysis.txt')
 
+# declare variables
 row_count = 0
 total_profit = 0
+previous_profit = 0
+change = 0
+changes = []
+ave_change = 0
 great_inc = 0
 inc_date = ''
 great_dec = 0
@@ -56,36 +31,35 @@ with open(read_path, 'r') as data_in, \
         row_count += 1
         total_profit += profit
 
-        if profit > great_inc:
-            inc_date = date
-            great_inc = profit
+        if previous_profit:
+            change = profit - previous_profit
+            changes.append(change)
 
-        if profit < great_dec:
+        previous_profit = profit
+
+        if change > great_inc:
+            inc_date = date
+            great_inc = change
+
+        if change < great_dec:
             dec_date = date
-            great_dec = profit
+            great_dec = change
+
+    ave_change = round(sum(changes) / len(changes), 2)
 
     writer.writerow(['Financial Analysis',
                      '-' * 23,
                      'Total Months: {}'.format(row_count),
                      'Total: ${}'.format(total_profit),
+                     'Average Change: ${}'.format(ave_change),
                      'Greatest Increase in Profits: {} (${})'.format(
                          inc_date, great_inc),
-                     'Greatest Decrease in Profits: {} (${})'.format(dec_date, great_dec)])
-
+                     'Greatest Decrease in Profits: {} (${})'.format(
+                         dec_date, great_dec)])
 
 
 with open(write_path, 'r') as print_data:
     printer = csv.reader(print_data, delimiter='\n')
-
+    print('\n')
     for line in printer:
         print(line[0])
-
-
-
-
-
-
-
-
-
-
