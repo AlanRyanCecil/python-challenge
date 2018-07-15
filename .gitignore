@@ -1,6 +1,7 @@
 .DS_Store
 Resources/
 Images/
+raw_data/
 *.csv
 *.xls
 *.txt
